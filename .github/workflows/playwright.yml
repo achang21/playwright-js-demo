@@ -63,7 +63,7 @@ jobs:
         run: npx playwright test --project=$BROWSER
       - name: Run all Playwright tests in parallel mode
         if: github.event.inputs.parallel != ''
-        run: npx playwright test --project=$BROWSER --workers=${{ github.event.inputs.parallel }}
+        run: npx playwright test --project=${{ env.TEST_BROWSER }} --workers=${{ github.event.inputs.parallel }}
       # - uses: actions/upload-artifact@v4
       #   if: ${{ !cancelled() }}
       #   with:
