@@ -58,8 +58,8 @@ jobs:
           echo ">>>>>> Test environment is: $NODE_ENV"
           echo ">>>>>> Test browser is: $BROWSER"
           echo ">>>>>> Test parallel is: $PARALLEL"
-      # - name: Run Playwright tests
-      #   run: npx playwright test
+      - name: Run Playwright tests
+        run: npx playwright test --project=$BROWSER --workers=$PARALLEL
       # - uses: actions/upload-artifact@v4
       #   if: ${{ !cancelled() }}
       #   with:
