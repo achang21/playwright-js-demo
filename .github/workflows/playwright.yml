@@ -29,7 +29,7 @@ on:
           - '2'
           - '3'
 jobs:
-  test:
+  playwright_test:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -50,10 +50,11 @@ jobs:
           echo "TEST_ENV=${{ github.event.inputs.test_env }} || env.DEFAULT_ENV" >> $GITHUB_ENV
           echo "TEST_BROWSER=${{ github.event.inputs.browser }} || env.DEFAULT_BROWSER" >> $GITHUB_ENV
           echo "TEST_PARALLEL=${{ github.event.inputs.parallel }} || env.DEFAULT_PARALLEL" >> $GITHUB_ENV
-      - name: Set up environment variables
+      - name: Set up workflow variables
         run: |
           export NODE_ENV=${{ env.TEST_ENV }}
           export BROWSER=${{ env.TEST_BROWSER }}
+          export PARALLEL=${{ env.TEST_PARALLEL }}
           echo ">>>>>> Test environment is: $NODE_ENV"
           echo ">>>>>> Test browser is: $BROWSER"
           echo ">>>>>> Test parallel is: $PARALLEL"
