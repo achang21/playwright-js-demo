@@ -9,7 +9,8 @@ import { defineConfig, devices } from '@playwright/test'
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 if (!process.env.NODE_ENV) {
-  require('dotenv').config({ path: './config/env/.env' })
+  // default to 'qa' environment
+  require('dotenv').config({ path: './config/env/.env.qa' })
 } else {
   require('dotenv').config({ path: `./config/env/.env.${process.env.NODE_ENV}` })
 }
