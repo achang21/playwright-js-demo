@@ -28,6 +28,7 @@ on:
           - '1'
           - '2'
           - '3'
+          - '4'
 jobs:
   playwright_test:
     timeout-minutes: 20
@@ -47,9 +48,9 @@ jobs:
           DEFAULT_BROWSER: 'chromium'
           DEFAULT_PARALLEL: '1'
         run: |
-          echo "TEST_ENV=${{ github.event.inputs.test_env }} || env.DEFAULT_ENV" >> $GITHUB_ENV
-          echo "TEST_BROWSER=${{ github.event.inputs.browser }} || env.DEFAULT_BROWSER" >> $GITHUB_ENV
-          echo "TEST_PARALLEL=${{ github.event.inputs.parallel }} || env.DEFAULT_PARALLEL" >> $GITHUB_ENV
+          echo "TEST_ENV=${{ inputs.test_env || env.DEFAULT_ENV }}" >> $GITHUB_ENV
+          echo "TEST_BROWSER=${{ inputs.browser || env.DEFAULT_BROWSER }}" >> $GITHUB_ENV
+          echo "TEST_PARALLEL=${{ inputs.parallel || env.DEFAULT_PARALLEL }}" >> $GITHUB_ENV
       - name: Set up workflow variables
         run: |
           export NODE_ENV=${{ env.TEST_ENV }}
