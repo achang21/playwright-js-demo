@@ -46,21 +46,24 @@ jobs:
         env:
           DEFAULT_ENV: 'qa'
           DEFAULT_BROWSER: 'chromium'
-          DEFAULT_PARALLEL: '1'
         run: |
           echo "TEST_ENV=${{ inputs.test_env || env.DEFAULT_ENV }}" >> $GITHUB_ENV
           echo "TEST_BROWSER=${{ inputs.browser || env.DEFAULT_BROWSER }}" >> $GITHUB_ENV
-          echo "TEST_PARALLEL=${{ inputs.parallel || env.DEFAULT_PARALLEL }}" >> $GITHUB_ENV
       - name: Set up workflow variables
         run: |
           export NODE_ENV=${{ env.TEST_ENV }}
           export BROWSER=${{ env.TEST_BROWSER }}
-          export PARALLEL=${{ env.TEST_PARALLEL }}
+          export PARALLEL=${{ github.event.inputs.parallel }}
           echo ">>>>>> Test environment is: $NODE_ENV"
           echo ">>>>>> Test browser is: $BROWSER"
           echo ">>>>>> Test parallel is: $PARALLEL"
-      - name: Run Playwright tests
-        run: npx playwright test --project=$BROWSER --workers=$PARALLEL
+
+      - name: Run all Playwright tests in sequential mode
+        if: github.event.inputs.parallel == ''
+        run: npx playwright test --project=$BROWSER
+      - name: Run all Playwright tests in parallel mode
+        if: github.event.inputs.parallel != ''
+        run: npx playwright test --project=$BROWSER --workers=${{ github.event.inputs.parallel }}
       # - uses: actions/upload-artifact@v4
       #   if: ${{ !cancelled() }}
       #   with:
