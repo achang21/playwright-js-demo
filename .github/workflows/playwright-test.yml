@@ -29,7 +29,7 @@ on:
           - "@pomDemo"
           - "@fixtureDemo"
       parallel:
-        description: "Run tests in parallel"
+        description: "Workers for running tests in parallel"
         required: true
         type: choice
         default: "1"
@@ -37,7 +37,6 @@ on:
           - "1"
           - "2"
           - "3"
-          - "4"
 permissions:
   contents: write # Allow read/write access to repository contents (for pushing code)
   issues: write # Allow read/write access to issues (create/edit)
