@@ -1,0 +1,1 @@
+[{"uid":"bc695808d3d1ce62","name":"Login with standard user @fixtureDemo","time":{"start":1764644827838,"stop":1764644828956,"duration":1118},"status":"passed","severity":"normal"},{"uid":"d79e18e45898939","name":"Login with locked out user @fixtureDemo","time":{"start":1764644827837,"stop":1764644828812,"duration":975},"status":"passed","severity":"normal"}]
