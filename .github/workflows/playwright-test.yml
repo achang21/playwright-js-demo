@@ -19,6 +19,15 @@ on:
           - chromium
           - firefox
           - webkit
+      test_tags:
+        description: "Test tags to filter tests"
+        required: false
+        type: choice
+        default: "@playwrightDemo"
+        options:
+          - "@playwrightDemo"
+          - "@pomDemo"
+          - "@fixtureDemo"
       parallel:
         description: "Run tests in parallel"
         required: true
@@ -29,11 +38,11 @@ on:
           - "2"
           - "3"
           - "4"
-permissions: # 全局权限配置
-  contents: write # 允许读写仓库内容（用于推送代码）
-  issues: write   # 允许操作Issues（创建/编辑）
-  pull-requests: read # 仅允许读取PR信息
-  
+permissions:
+  contents: write # Allow read/write access to repository contents (for pushing code)
+  issues: write # Allow read/write access to issues (create/edit)
+  pull-requests: read # Allow read access to pull requests information
+
 jobs:
   playwright_test:
     timeout-minutes: 20
@@ -43,43 +52,38 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install dependencies
+      - name: 1. Install dependencies
         run: npm ci
-      - name: Install Playwright Browsers
+      - name: 2. Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Init workflow variables
+      - name: 3. Init workflow variables
         env:
           DEFAULT_ENV: "qa"
           DEFAULT_BROWSER: "chromium"
           DEFAULT_PARALLEL: 1
+          DEFAULT_TEST_TAGS: "@playwrightDemo"
         run: |
           echo "TEST_ENV=${{ inputs.test_env || env.DEFAULT_ENV }}" >> $GITHUB_ENV
           echo "TEST_BROWSER=${{ inputs.browser || env.DEFAULT_BROWSER }}" >> $GITHUB_ENV
           echo "TEST_PARALLEL=${{ inputs.parallel || env.DEFAULT_PARALLEL }}" >> $GITHUB_ENV
-      - name: Set up workflow variables
+          echo "TEST_TAGS=${{ inputs.test_tags || env.DEFAULT_TEST_TAGS }}" >> $GITHUB_ENV
+      - name: 4. Set up workflow variables
         run: |
           export NODE_ENV=${{ env.TEST_ENV }}
           echo ">>>>>> Test environment is: $NODE_ENV"
           echo ">>>>>> Test browser is: ${{ env.TEST_BROWSER }}"
           echo ">>>>>> Test parallel is: ${{ env.TEST_PARALLEL }}"
-      - name: Run Playwright tests
+      - name: 5. Run Playwright tests
         run: |
-          npx playwright test --project=${{ env.TEST_BROWSER }} --workers=${{ env.TEST_PARALLEL }}
-        # run: npx playwright test --project=${{ env.TEST_BROWSER }} --workers=${{ github.event.inputs.parallel }}
-      # - uses: actions/upload-artifact@v4
-      #   if: ${{ !cancelled() }}
-      #   with:
-      #     name: playwright-report
-      #     path: playwright-report/
-      #     retention-days: 30
-      - name: Load Allure test report history
+          npx playwright test --project=${{ env.TEST_BROWSER }} --grep=${{ env.TEST_TAGS }} --workers=${{ env.TEST_PARALLEL }}
+      - name: 6. Load Allure test report history
         uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages-dir
-      - name: Generate Allure test report
+      - name: 7. Generate Allure test report
         uses: andgineer/allure-report@v3.5
         id: allure-report
         if: always()
@@ -88,7 +92,7 @@ jobs:
           website: gh-pages-dir
           reports-site-path: builds/tests
           report-page: behaviors
-      - name: Publish Allure test report
+      - name: 8. Publish Allure test report
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ always() && (steps.allure-report.outcome == 'success') }}
         with:
